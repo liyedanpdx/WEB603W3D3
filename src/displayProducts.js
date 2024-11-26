@@ -4,6 +4,21 @@ import {Modal} from 'react-bootstrap'
 export default function ProductItem({ProductLists, updateProductLists}){
   const[show, setShow] = useState(false);
   const[showImge, setShowImge] = useState({});
+  const[sortType, updateSortType] = useState({});
+
+  const sortProducts = (products, sortType) =>{
+    const sortedProducts = [...products];
+    switch(sortType) {
+      case 'normal':
+        return sortedProducts.sort((a,b) => a.id-b.id);
+      case 'lowest':
+        return sortedProducts.sort((a,b) => a.price-b.price);
+      case 'highest':
+        return sortedProducts.sort((a,b) => b.price-a.price);
+      default:
+        return sortedProducts;
+    }
+  };
 
   const handleClose = () =>setShow(false);
   const handleShow = (product) =>{
@@ -33,9 +48,24 @@ export default function ProductItem({ProductLists, updateProductLists}){
 
   return(
     <div>
-      {ProductLists.products.map((product, index)=>(
+      <div className="d-flex justify-content-center align-items-center my-4">
+        <div className="d-flex align-items-center">
+          <span className="me-2">Sort Price By: </span>
+          <select
+            value={sortType}
+            onChange={(e)=>updateSortType(e.target.value)}
+            className="form-select form-select-sm"
+            style={{ width: 'auto' }}
+          >
+            <option value="normal">Normal</option>
+            <option value="lowest">Lowest</option>
+            <option value="highest">Highest</option>
+          </select>
+        </div>
+      </div>
+      {sortProducts(ProductLists.products, sortType).map((product, index)=>(
         <div className="product-item" key={index}>
-        <div key={index}>{product.desc}</div>
+        <div key={index}>{product.desc}<span class='ms-2 text-danger'>${product.price}</span></div>
         <div className="nowrap-left">
           <div>
           <img 
